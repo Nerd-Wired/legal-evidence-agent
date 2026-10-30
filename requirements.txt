@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+streamlit
+pymupdf
+sentence-transformers
+qdrant-client
+rank-bm25
+openai
+python-dotenv
+pydantic
+numpy
+pytest
+python-multipart
