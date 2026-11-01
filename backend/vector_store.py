@@ -28,6 +28,13 @@ def create_collection():
             )
         )
 
+def reset_collection():
+    existing = [c.name for c in client.get_collections().collections]
+
+    if COLLECTION_NAME in existing:
+        client.delete_collection(COLLECTION_NAME)
+
+    create_collection()
 
 def store_chunks(chunks, embeddings):
     points = []

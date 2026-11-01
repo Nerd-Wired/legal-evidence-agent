@@ -3,16 +3,22 @@ from pathlib import Path
 from backend.pdf_loader import load_pdf
 from backend.chunker import chunk_pages
 from backend.embedder import generate_embeddings
-from backend.vector_store import create_collection, store_chunks
-from backend.agent.nodes import set_document_store
+from backend.vector_store import (
+    reset_collection,
+    store_chunks,
+    close_vector_store
+)
+from backend.chunk_store import save_chunks
 
-DOCUMENTS_DIR = Path("data/documents")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DOCUMENTS_DIR = BASE_DIR / "data" / "documents"
 
 
 def index_documents():
+    pdf_paths = sorted(DOCUMENTS_DIR.glob("*.pdf"))
     all_chunks = []
 
-    for pdf_path in DOCUMENTS_DIR.glob("*.pdf"):
+    for pdf_path in pdf_paths:
         print(f"Processing: {pdf_path.name}")
 
         pages = load_pdf(str(pdf_path))
@@ -26,20 +32,22 @@ def index_documents():
     if not all_chunks:
         raise ValueError("No PDF documents or text chunks found.")
 
-    # Generate embeddings
     texts = [chunk["text"] for chunk in all_chunks]
     embeddings = generate_embeddings(texts)
 
-    # Store in Qdrant
-    create_collection()
+    # Rebuild Qdrant from scratch so no stale points remain
+    reset_collection()
     store_chunks(all_chunks, embeddings)
 
-    # Initialize BM25
-    set_document_store(all_chunks)
+    # Persist the exact same chunks so BM25 can be rebuilt identically
+    save_chunks(all_chunks)
 
     print(f"\nSuccessfully indexed {len(all_chunks)} chunks.")
-    print(f"Documents processed: {len(list(DOCUMENTS_DIR.glob('*.pdf')))}")
+    print(f"Documents processed: {len(pdf_paths)}")
 
 
 if __name__ == "__main__":
-    index_documents()
+    try:
+        index_documents()
+    finally:
+        close_vector_store()

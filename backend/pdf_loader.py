@@ -1,8 +1,8 @@
-import fitz
+import pymupdf
 from pathlib import Path
 
 def load_pdf(file_path:str)->list[dict]:
-    document = fitz.open(file_path)
+    document = pymupdf.open(file_path)
     pages=[]
 
     for page_number,page in enumerate(document,start=1):

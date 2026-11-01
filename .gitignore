@@ -1,6 +1,7 @@
 
 # Python
 __pycache__/
+.pytest_cache/
 *.py[cod]
 venv/
 .venv/
@@ -8,6 +9,7 @@ venv/
 # Environment variables
 .env
 .env.*
+!.env.example
 
 # Qdrant local database
 qdrant_storage/
@@ -27,3 +29,5 @@ Thumbs.db
 
 # Temporary files
 *.log
+
+data/chunks.json

@@ -21,5 +21,7 @@ class AgentState(TypedDict):
     # Retry tracking
     retry_count: int
 
+    citation_feedback: str
+
     # Error tracking
     error: str
