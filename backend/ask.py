@@ -30,10 +30,11 @@ def main():
         print(round(max(scores, default=0.0), 3))
 
         print("\nANSWER:")
+        print(result["answer"])
+
         if result["evidence_sufficient"]:
             print("\nCITATIONS VALID:")
             print(result["citations_valid"], "| failed checks:", result["retry_count"])
-        print(result["answer"])
 
         print("\nERROR:")
         print(result["error"])
